@@ -218,6 +218,17 @@ impl<Io> EventLoop<Io>
                     if !terminal.dirty {
                         self.display.notify();
                         terminal.dirty = true;
+
+                        // Break for writing
+                        //
+                        // Want to prevent case where reading always returns
+                        // data and sequences like `C-c` cannot be sent.
+                        //
+                        // Doing this check in !terminal.dirty will prevent the
+                        // condition from being checked overzealously.
+                        if state.writing.is_some() || !state.write_list.is_empty() {
+                            break;
+                        }
                     }
                 },
                 Err(err) => {
