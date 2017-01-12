@@ -1,2 +1,6 @@
 target
 FlameGraph
+
+# Temp files
+*.swp
+.DS_Store
